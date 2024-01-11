@@ -8,12 +8,11 @@
 #include <unistd.h>
 
 #include "helpers/server_helper.h"
+#include "server/server_game.h"
 
 
+void parent_thread(int sockfd);
 void server_thread(thread_args_t *args);
-
-
-pthread_mutex_t mutex;
 
 
 // server entry point
@@ -34,10 +33,10 @@ int main(int argc, char *argv[])
     printf("Server listening on port %d...\n", port);
 
     // create threads
-    pthread_t threads[MAX_CLIENTS];
-    pthread_mutex_init(&mutex, NULL);
+    pthread_t threads[MAX_PLAYER];
+    // pthread_mutex_init(&mutex, NULL);
 
-    for (int player_num = 0; player_num < MAX_CLIENTS; player_num++) {
+    for (int player_num = 0; player_num < MAX_PLAYER; player_num++) {
         // accept connections
         int accepted_sockfd = accept_connection(sockfd);
 
@@ -49,7 +48,9 @@ int main(int argc, char *argv[])
                        (void *) &args);
     }
 
-    for (int i = 0; i < MAX_CLIENTS; i++) {
+    parent_thread(sockfd);
+
+    for (int i = 0; i < MAX_PLAYER; i++) {
         pthread_join(threads[i], NULL);
     }
 
@@ -58,37 +59,61 @@ int main(int argc, char *argv[])
 }
 
 
-void server_thread(thread_args_t *args)
+void parent_thread(int sockfd)
 {
-    char buffer[BUFSIZ];
-    int  n;
-    int  player_num      = args->player_num;
-    int  accepted_sockfd = args->accepted_sockfd;
-
-    printf("connected player %d\n", player_num);
-
-    // event loop
+    // wait for two players to connect
     while (true) {
-        memset(buffer, 0, BUFSIZ);
-        n = recv(accepted_sockfd, buffer, BUFSIZ, 0);
-        if (n < 0) {
-            perror("recv");
-            exit(EXIT_FAILURE);
+        if (is_connected[0] && is_connected[1]) {
+            puts("both players connected");
+            break;
         }
+        usleep(10000);
+    }
 
-        if (strncmp(buffer, "exit\n", 5) == 0) {
-            printf("disconnected player %d\n", player_num);
+    init_server();
+
+    // start game
+    while (true) {
+        if (is_connected[0] == false || is_connected[1] == false) {
+            game_finish = true;
             break;
         }
 
-        printf("player %d: %s", player_num, buffer);
+        update_ball_pos();
 
-        n = send(accepted_sockfd, buffer, strlen(buffer), 0);
-        if (n < 0) {
-            perror("send");
-            exit(EXIT_FAILURE);
-        }
+        usleep(30000);
     }
+}
+
+
+void server_thread(thread_args_t *args)
+{
+    int accepted_sockfd = args->accepted_sockfd;
+    int player_num      = args->player_num;
+    int op_player_num   = (player_num + 1) % MAX_PLAYER;
+
+    printf("player %d connected\n", player_num);
+    is_connected[player_num] = true;
+
+
+    while (is_connected[player_num] && !game_finish) {
+        to_server_t to_server    = receive_data(accepted_sockfd);
+        paddle_pos[player_num]   = to_server.paddle_pos;
+        is_connected[player_num] = to_server.is_connected;
+
+        to_client_t to_client = (to_client_t){
+            .round           = round_num,
+            .ball_pos        = ball_pos,
+            .op_paddle_pos   = paddle_pos[op_player_num],
+            .op_is_connected = is_connected[op_player_num],
+        };
+        send_data(accepted_sockfd, &to_client);
+
+        usleep(30000);
+        printf("player %d\n", player_num);
+    }
+
+    printf("player %d disconnected\n", player_num);
 
     close(accepted_sockfd);
 }

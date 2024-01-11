@@ -11,7 +11,7 @@ $ ls
 Makefile  README.md  bin  src  target
 ```
 
-then run
+then
 
 ```bash
 $ make

@@ -55,3 +55,28 @@ int accept_connection(int sockfd)
 
     return accepted_sockfd;
 }
+
+
+to_server_t receive_data(int sockfd)
+{
+    to_server_t data;
+    int         n = recv(sockfd, &data, sizeof(to_server_t), 0);
+
+    if (n < 0) {
+        perror("read");
+        exit(EXIT_FAILURE);
+    }
+
+    return data;
+}
+
+
+void send_data(int sockfd, to_client_t *data)
+{
+    int n = send(sockfd, data, sizeof(to_client_t), 0);
+
+    if (n < 0) {
+        perror("write");
+        exit(EXIT_FAILURE);
+    }
+}

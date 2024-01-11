@@ -39,3 +39,27 @@ void create_connection(int sockfd, char *host, int port)
         exit(1);
     }
 }
+
+
+to_client_t receive_data(int sockfd)
+{
+    to_client_t data;
+    int         n = recv(sockfd, &data, sizeof(data), 0);
+
+    if (n < 0) {
+        perror("recv");
+        exit(EXIT_FAILURE);
+    }
+
+    return data;
+}
+
+
+void send_data(int sockfd, to_server_t *data) {
+    int n = send(sockfd, data, sizeof(*data), 0);
+
+    if (n < 0) {
+        perror("send");
+        exit(EXIT_FAILURE);
+    }
+}

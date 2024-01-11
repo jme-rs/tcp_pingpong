@@ -1,22 +1,20 @@
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef CLIENT_GAME_H_
+#define CLIENT_GAME_H_
 
 
 #include <ncurses.h>
 #include <stdio.h>
 
-#ifndef __USE_MISC
-#define __USE_MISC
-#endif
-#include <math.h>
-
-#include "include/types.h"
+#include "../include/types.h"
 
 
 // shared resources
-ball_t   ball_pos;
-paddle_t my_paddle_pos;
-paddle_t op_paddle_pos;
+ball_t     ball_pos;
+paddle_t   my_paddle_pos;
+paddle_t   op_paddle_pos;
+round_t    round_num;
+quitflag_t is_connected;
+quitflag_t op_is_connected;
 
 void init_ncurses();
 void finish_ncurses();
@@ -26,4 +24,4 @@ void draw_paddle();
 void draw_ball();
 
 
-#endif // GAME_H_
+#endif // CLIENT_GAME_H_

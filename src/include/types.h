@@ -2,10 +2,13 @@
 #define TYPES_H_
 
 
+#include <inttypes.h>
+#include <stdbool.h>
+
 #define MAX_X           100
 #define MAX_Y           30
 #define BOUNDARY_HEIGHT 4
-#define BALL_SPEED      2
+#define BALL_SPEED      1
 #define PADDLE_WIDTH    9
 #define PADDLE_POS_Y    6
 
@@ -18,7 +21,21 @@ typedef struct {
 } ball_t;
 
 // paddle position
-typedef int paddle_t;
+typedef int32_t paddle_t;
+typedef int8_t  round_t;
+typedef bool    quitflag_t;
+
+typedef struct {
+    round_t    round;
+    ball_t     ball_pos;
+    paddle_t   op_paddle_pos;
+    quitflag_t op_is_connected;
+} to_client_t;
+
+typedef struct {
+    paddle_t   paddle_pos;
+    quitflag_t is_connected;
+} to_server_t;
 
 
 #endif // TYPES_H_

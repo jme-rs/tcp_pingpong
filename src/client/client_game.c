@@ -23,7 +23,8 @@ void finish_ncurses()
 
 void init_client()
 {
-    ball_pos      = (ball_t){ .x = MAX_X / 2, .y = MAX_Y / 2, .angle = M_PI / 4 };
+    is_connected  = true;
+    ball_pos      = (ball_t){ .x = MAX_X / 2, .y = MAX_Y / 2, .angle = 0.0 };
     my_paddle_pos = MAX_X / 2;
     op_paddle_pos = MAX_X / 2;
 }
@@ -47,7 +48,7 @@ void draw_field()
 
 void draw_paddle()
 {
-    MEVENT e;
+    MEVENT   e;
     paddle_t pos_x;
     if (getmouse(&e) == OK)
         pos_x = e.x;
@@ -67,24 +68,10 @@ void draw_paddle()
 
     // opponent's paddle
     for (int x = -PADDLE_WIDTH / 2; x < PADDLE_WIDTH / 2 + 1; x++)
-        mvaddch(PADDLE_POS_Y - 1, op_paddle_pos + x, '-');
+        mvaddch(PADDLE_POS_Y - 1, MAX_X - op_paddle_pos + x, '-');
 }
 
 void draw_ball()
 {
-    // clear
-    mvaddch(ball_pos.y, ball_pos.x, ' ');
-
-    // move
-    ball_pos.x += BALL_SPEED * cos(ball_pos.angle);
-    ball_pos.y += BALL_SPEED * sin(ball_pos.angle);
-
-    // bounce
-    if (ball_pos.x < 1 || MAX_X - 1 < ball_pos.x)
-        ball_pos.angle = M_PI - ball_pos.angle;
-    else if (ball_pos.y < BOUNDARY_HEIGHT || MAX_Y - BOUNDARY_HEIGHT < ball_pos.y)
-        ball_pos.angle = -ball_pos.angle;
-
-    // draw
     mvaddch(ball_pos.y, ball_pos.x, 'o');
 }
