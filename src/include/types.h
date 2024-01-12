@@ -5,10 +5,10 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#define MAX_X           100
+#define MAX_X           50
 #define MAX_Y           30
 #define BOUNDARY_HEIGHT 4
-#define BALL_SPEED      1
+#define BALL_SPEED      0.05
 #define PADDLE_WIDTH    9
 #define PADDLE_POS_Y    6
 

@@ -4,6 +4,7 @@
 
 #include <ncurses.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "../include/types.h"
 
@@ -22,6 +23,7 @@ void init_client();
 void draw_field();
 void draw_paddle();
 void draw_ball();
+void wait_for_opponent();
 
 
 #endif // CLIENT_GAME_H_

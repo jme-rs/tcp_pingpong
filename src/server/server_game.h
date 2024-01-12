@@ -22,6 +22,8 @@ quitflag_t game_finish;
 
 void init_server();
 void update_ball_pos();
+void reverse_ball_pos(ball_t *ball);
+void reverse_paddle_pos(paddle_t *paddle);
 
 
 #endif // SERVER_GAME_H_

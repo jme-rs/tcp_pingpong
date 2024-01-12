@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
 
     // create threads
     pthread_t threads[MAX_PLAYER];
-    // pthread_mutex_init(&mutex, NULL);
 
     for (int player_num = 0; player_num < MAX_PLAYER; player_num++) {
         // accept connections
@@ -81,7 +80,8 @@ void parent_thread(int sockfd)
 
         update_ball_pos();
 
-        usleep(30000);
+        usleep(6000);
+        // usleep(1000000);
     }
 }
 
@@ -97,20 +97,33 @@ void server_thread(thread_args_t *args)
 
 
     while (is_connected[player_num] && !game_finish) {
-        to_server_t to_server    = receive_data(accepted_sockfd);
+        // receive data from client
+        to_server_t to_server = receive_data(accepted_sockfd);
+        if (player_num == 1) {
+            reverse_paddle_pos(&to_server.paddle_pos);
+        }
         paddle_pos[player_num]   = to_server.paddle_pos;
         is_connected[player_num] = to_server.is_connected;
 
+        // send data to client
+        ball_t tmp_ball_pos = ball_pos;
+        if (player_num == 1) {
+            reverse_ball_pos(&tmp_ball_pos);
+        }
+        paddle_t tmp_paddle_pos = paddle_pos[op_player_num];
+        if (player_num == 1) {
+            reverse_paddle_pos(&tmp_paddle_pos);
+        }
         to_client_t to_client = (to_client_t){
             .round           = round_num,
-            .ball_pos        = ball_pos,
-            .op_paddle_pos   = paddle_pos[op_player_num],
+            .ball_pos        = tmp_ball_pos,
+            .op_paddle_pos   = tmp_paddle_pos,
             .op_is_connected = is_connected[op_player_num],
         };
         send_data(accepted_sockfd, &to_client);
 
         usleep(30000);
-        printf("player %d\n", player_num);
+        // printf("player %d\n", player_num);
     }
 
     printf("player %d disconnected\n", player_num);
