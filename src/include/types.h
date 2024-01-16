@@ -39,4 +39,4 @@ typedef struct {
 } to_server_t;
 
 
-#endif // TYPES_H_
+#endif // TYPES_H

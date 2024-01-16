@@ -27,4 +27,4 @@ void draw_ball();
 void wait_for_opponent();
 
 
-#endif // CLIENT_GAME_H_
+#endif // CLIENT_GAME_H

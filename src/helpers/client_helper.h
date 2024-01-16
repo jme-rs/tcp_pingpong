@@ -21,4 +21,4 @@ to_client_t receive_data(int sockfd);
 void        send_data(int sockfd, to_server_t *data);
 
 
-#endif // CLIENT_HELPER_H_
+#endif // CLIENT_HELPER_H

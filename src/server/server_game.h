@@ -27,4 +27,4 @@ void reverse_paddle_pos(paddle_t *paddle);
 bool is_game_over();
 
 
-#endif // SERVER_GAME_H_
+#endif // SERVER_GAME_H

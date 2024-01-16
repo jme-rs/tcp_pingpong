@@ -58,6 +58,7 @@ void reverse_paddle_pos(paddle_t *paddle)
     *paddle = MAX_X - *paddle - 1;
 }
 
+
 bool is_game_over()
 {
     return ball_pos.y < 0 || MAX_Y - 1 < ball_pos.y;
