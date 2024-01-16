@@ -51,15 +51,21 @@ void process()
         int ch = getch();
         if (ch == 'q') {
             is_connected = false;
+            finish_ncurses();
+            break;
+        }
+
+        if (game_finish) {
+            is_connected = false;
+            finish_ncurses();
+            puts("Game finished");
             break;
         }
 
         if (!op_is_connected) {
             is_connected = false;
-            clear();
-            mvprintw(0, 0, "Opponent disconnected!");
-            refresh();
-            sleep(2);
+            finish_ncurses();
+            puts("Opponent disconnected");
             break;
         }
 
@@ -69,8 +75,6 @@ void process()
         draw_ball();
         refresh();
     }
-
-    finish_ncurses();
 }
 
 
@@ -79,34 +83,25 @@ void client_thread(int *sockfd)
     while (!is_connected)
         usleep(10000);
 
-    while (is_connected) {
+    while (true) {
         to_server_t to_server = (to_server_t){
             .paddle_pos   = my_paddle_pos,
             .is_connected = is_connected,
         };
         send_data(*sockfd, &to_server);
 
+        if (!is_connected)
+            break;
+
         to_client_t to_client = receive_data(*sockfd);
         round_num             = to_client.round;
         ball_pos              = to_client.ball_pos;
         op_paddle_pos         = to_client.op_paddle_pos;
         op_is_connected       = to_client.op_is_connected;
+        game_finish           = to_client.game_finish;
 
         usleep(30000);
     }
 
-    // finalize
-    to_server_t to_server = (to_server_t){
-        .paddle_pos   = my_paddle_pos,
-        .is_connected = is_connected,
-    };
-    send_data(*sockfd, &to_server);
-
-    to_client_t to_client = receive_data(*sockfd);
-    round_num             = to_client.round;
-    ball_pos              = to_client.ball_pos;
-    op_paddle_pos         = to_client.op_paddle_pos;
-    op_is_connected       = to_client.op_is_connected;
-
-    puts("Disconnected!");
+    puts("Disconnected");
 }

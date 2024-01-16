@@ -1,5 +1,5 @@
-#ifndef TYPES_H_
-#define TYPES_H_
+#ifndef TYPES_H
+#define TYPES_H
 
 
 #include <inttypes.h>
@@ -30,6 +30,7 @@ typedef struct {
     ball_t     ball_pos;
     paddle_t   op_paddle_pos;
     quitflag_t op_is_connected;
+    quitflag_t game_finish;
 } to_client_t;
 
 typedef struct {

@@ -1,5 +1,5 @@
-#ifndef SERVER_GAME_H_
-#define SERVER_GAME_H_
+#ifndef SERVER_GAME_H
+#define SERVER_GAME_H
 
 
 #include <stdio.h>
@@ -24,6 +24,7 @@ void init_server();
 void update_ball_pos();
 void reverse_ball_pos(ball_t *ball);
 void reverse_paddle_pos(paddle_t *paddle);
+bool is_game_over();
 
 
 #endif // SERVER_GAME_H_

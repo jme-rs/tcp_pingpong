@@ -1,5 +1,5 @@
-#ifndef CLIENT_HELPER_H_
-#define CLIENT_HELPER_H_
+#ifndef CLIENT_HELPER_H
+#define CLIENT_HELPER_H
 
 
 #include <arpa/inet.h>

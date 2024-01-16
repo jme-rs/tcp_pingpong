@@ -3,8 +3,8 @@
 
 void init_server()
 {
-    round_num   = 1;
-    ball_pos    = (ball_t){ .x = MAX_X / 2, .y = MAX_Y / 2, .angle = M_PI / 2 };
+    round_num = 1;
+    ball_pos  = (ball_t){ .x = MAX_X / 2, .y = MAX_Y / 2, .angle = -M_PI / 4 };
     game_finish = false;
 }
 
@@ -27,15 +27,6 @@ void update_ball_pos()
     else if (MAX_X - 1 < ball.x) {
         ball.x     = MAX_X - 1;
         ball.angle = M_PI - ball.angle;
-    }
-
-    if (ball.y < BOUNDARY_HEIGHT) {
-        ball.y     = BOUNDARY_HEIGHT;
-        ball.angle = -ball.angle;
-    }
-    if (MAX_Y - BOUNDARY_HEIGHT < ball.y) {
-        ball.y     = MAX_Y - BOUNDARY_HEIGHT;
-        ball.angle = -ball.angle;
     }
 
     // paddle reflection
@@ -65,4 +56,9 @@ void reverse_ball_pos(ball_t *ball)
 void reverse_paddle_pos(paddle_t *paddle)
 {
     *paddle = MAX_X - *paddle - 1;
+}
+
+bool is_game_over()
+{
+    return ball_pos.y < 0 || MAX_Y - 1 < ball_pos.y;
 }

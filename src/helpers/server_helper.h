@@ -1,5 +1,5 @@
-#ifndef SERVER_HELPER_H_
-#define SERVER_HELPER_H_
+#ifndef SERVER_HELPER_H
+#define SERVER_HELPER_H
 
 
 #include <netinet/in.h>

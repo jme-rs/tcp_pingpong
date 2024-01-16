@@ -1,5 +1,5 @@
-#ifndef CLIENT_GAME_H_
-#define CLIENT_GAME_H_
+#ifndef CLIENT_GAME_H
+#define CLIENT_GAME_H
 
 
 #include <ncurses.h>
@@ -16,6 +16,7 @@ paddle_t   op_paddle_pos;
 round_t    round_num;
 quitflag_t is_connected;
 quitflag_t op_is_connected;
+quitflag_t game_finish;
 
 void init_ncurses();
 void finish_ncurses();

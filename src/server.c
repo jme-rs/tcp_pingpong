@@ -73,14 +73,19 @@ void parent_thread(int sockfd)
 
     // start game
     while (true) {
-        if (is_connected[0] == false || is_connected[1] == false) {
+        if (!is_connected[0] || !is_connected[1]) {
+            game_finish = true;
+            break;
+        }
+
+        if (is_game_over()) {
             game_finish = true;
             break;
         }
 
         update_ball_pos();
 
-        usleep(6000);
+        usleep(4500);
         // usleep(1000000);
     }
 }
@@ -96,7 +101,7 @@ void server_thread(thread_args_t *args)
     is_connected[player_num] = true;
 
 
-    while (is_connected[player_num] && !game_finish) {
+    while (true) {
         // receive data from client
         to_server_t to_server = receive_data(accepted_sockfd);
         if (player_num == 1) {
@@ -104,6 +109,9 @@ void server_thread(thread_args_t *args)
         }
         paddle_pos[player_num]   = to_server.paddle_pos;
         is_connected[player_num] = to_server.is_connected;
+
+        if (!is_connected[player_num])
+            break;
 
         // send data to client
         ball_t tmp_ball_pos = ball_pos;
@@ -119,11 +127,11 @@ void server_thread(thread_args_t *args)
             .ball_pos        = tmp_ball_pos,
             .op_paddle_pos   = tmp_paddle_pos,
             .op_is_connected = is_connected[op_player_num],
+            .game_finish     = game_finish,
         };
         send_data(accepted_sockfd, &to_client);
 
         usleep(30000);
-        // printf("player %d\n", player_num);
     }
 
     printf("player %d disconnected\n", player_num);
